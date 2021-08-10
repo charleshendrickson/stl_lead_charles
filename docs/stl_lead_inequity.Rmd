@@ -1,0 +1,77 @@
+---
+title: "stl_lead_inequity"
+author: "Charles Hendrickson"
+date: "8/9/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+library(janitor)
+library(skimr)
+```
+
+## Read in the `stl_blood_lead.csv1` data as `stl_lead`
+
+```{r}
+stl_lead <- read_delim(here::here("data","stl_blood_lead.csv"),delim = ";") %>%
+  clean_names() %>% 
+  mutate(prop_white = white / total_pop * 100) %>%
+  mutate(pct_elevated = str_replace(pct_elevated,
+                                        pattern = ",",
+                                        replacement = ".")) %>% 
+  mutate(pct_elevated = as.numeric(pct_elevated))
+
+```
+
+## Basic exploration of the dataset
+
+```{r}
+dim(stl_lead)
+
+names(stl_lead)
+
+```
+
+# Creating a scatterplot
+
+```{r}
+stl_lead_plot <- ggplot(data = stl_lead, aes(x = pct_elevated, y = prop_white)) +
+  geom_point(color = "red")
+
+stl_lead_plot
+
+```
+# Looks like a negative corolation between prop_white and pct_elevated.
+
+```{r}
+ggsave(here::here("figs", "stl_lead_plot.jpg"), height = 5, width = 6)
+```
+
+```{r}
+
+histogram_pct_elevated <- ggplot(data = stl_lead, aes(x = pct_elevated)) +
+  geom_histogram(color = "blue", fill = "white") + 
+  labs(title = "Histogram of pct_elevated ",
+       x = "pct_elevated")
+
+histogram_pct_elevated
+```
+
+```{r}
+ggsave(here::here("figs", "histogram_pct_elevated.jpg"))
+
+```
+
+
+
+
+
+
+
+
+
+
+
